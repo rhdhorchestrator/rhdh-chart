@@ -17,6 +17,7 @@ Run `helm install <release_name> charts/orchestrator-infra`. Please note we are 
 
 1. Create a new namespace on the OpenShift cluster where you have installed the orchestrator-infra chart. 
 1. Run `helm dependency build charts/backstage`. This will locally build the dependency charts needed for backstage.
+* This step may fail and will require you to remove and re-add the helm repo dependencies.
 1. Make any necessary changes to the default values.yaml file. e.g, add your host, authentication providers etc. 
 1. Install backstage chart with helm, setting orchestrator to be enabled:
 
