@@ -37,7 +37,7 @@ keywords:
   - developer-hub
   - redhat-developer-hub
   - redhat
-kubeVersion: ">= 1.19.0-0"
+kubeVersion: ">= 1.27.0-0"
 maintainers:
   - name: Red Hat
     url: https://redhat.com
@@ -47,4 +47,4 @@ sources: []
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
 # Versions are expected to follow Semantic Versioning (https://semver.org/)
-version: 4.2.0
+version: 4.2.2
