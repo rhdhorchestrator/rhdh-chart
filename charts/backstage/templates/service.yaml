@@ -1,0 +1,14 @@
+{{- if .Values.orchestrator.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: mytesthttpservice
+  namespace: {{ .Release.Namespace | quote }}
+spec:
+  selector:
+    app: mytesthttpserver
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+{{- end }}
