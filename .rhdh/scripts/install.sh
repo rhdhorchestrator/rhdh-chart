@@ -9,26 +9,28 @@ usage ()
 {
   echo "Usage: $0 CHART_VERSION [-n namespace]
 
+Requires an existing connection to an OCP or k8s cluster
+Requires helm, plus oc or kubectl, to be installed and on the path
+
 Examples:
   $0 1.5.1 
-  $0 1.7-20-CI -n rhdh-ci
+  $0 1.7-zzz-CI -n rhdh-ci
 
 Options:
   -n, --namespace   Project or namespace into which to install specified chart; default: $namespace
-      --github-repo If set will use the deprecated github repository to install the helm chart instead of the OCI registry.
+      --chartrepo   If set, a Helm Chart Repo will be applied to the cluster, based on the chart version.
+                    If CHART_VERSION ends in CI, this is done by default.
       --router      If set, the cluster router base is manually set. 
                     Required for non-admin users
                     Redundant for admin users
 "
-      # --chartrepo   If set, a Helm Chart Repo will be applied to the cluster, based on the chart version.
-      #               If CHART_VERSION ends in CI, this is done by default.
 }
 
 if [[ $# -lt 1 ]]; then usage; exit 0; fi
 
 while [[ "$#" -gt 0 ]]; do
   case $1 in
-    # '--chartrepo') chartrepo=1;;
+    '--chartrepo') chartrepo=1;;
     '-n'|'--namespace') namespace="$2"; shift 1;;
     '-h') usage; exit 0;;
     '--router') CLUSTER_ROUTER_BASE="$2"; shift 1;;
@@ -53,15 +55,83 @@ echo "Using ${CHART_URL} to install Helm chart"
 # choose namespace for the install (or create if non-existant)
 oc new-project "$namespace" || oc project "$namespace"
 
-# TODO: RHIDP-6668 generate rhdh-next-ci-repo.yaml while installing so we don't have to publish a new file every time
-# TODO: RHIDP-6668 publish an index.yaml with every tarball pushed to quay.io/rhdh/chart; save them in rhdh-chart repo (one per CI versioned branch)
-# if [[ "$CV" == *"-CI" ]] || [[ $chartrepo -eq 1 ]]; then
-# see samples at 
-# https://github.com/rhdh-bot/openshift-helm-charts/blob/rhdh-1-rhel-9/installation/index.yaml#L19
-# https://github.com/rhdh-bot/openshift-helm-charts/blob/rhdh-1-rhel-9/installation/index.yaml#L49-L50
-# https://github.com/rhdh-bot/openshift-helm-charts/blob/rhdh-1-rhel-9/installation/rhdh-next-ci-repo.yaml#L8
-#     oc apply -f https://github.com/redhat-developer/rhdh-chart/raw/redhat-developer-hub-"${CV}"/installation/rhdh-next-ci-repo.yaml
-# fi
+# generate repo.yaml and index.yaml so we don't have to publish a new file every time
+if [[ "$CV" == *"-CI" ]] || [[ $chartrepo -eq 1 ]]; then
+  mkdir -p /tmp/"$CV"-unpacked && pushd /tmp/"$CV"-unpacked >/dev/null 2>&1 || exit 1
+  helm pull oci://quay.io/rhdh/chart --version "$CV" -d /tmp/"$CV"-unpacked # get tarball
+  helm repo index /tmp/"$CV"-unpacked # create index.yaml
+
+  # HelmChartRepository does not support OCI artifacts.
+  # Host an in-cluster Helm repo serving both the index and chart files.
+  if oc -n "$namespace" get configmap helm-repo-files > /dev/null; then
+    oc -n "$namespace" delete configmap helm-repo-files
+  fi
+  oc -n "$namespace" create configmap helm-repo-files \
+    --from-file=/tmp/"$CV"-unpacked/index.yaml \
+    --from-file=/tmp/"$CV"-unpacked/chart-${CV}.tgz
+  cat <<EOF > helm-repo.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: helm-repo
+  annotations:
+    rhdh.redhat.com/chart-version: "$CV"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: helm-repo
+  template:
+    metadata:
+      labels:
+        app: helm-repo
+      annotations:
+        rhdh.redhat.com/chart-version: "$CV"
+    spec:
+      containers:
+      - name: nginx
+        image: quay.io/openshifttest/nginx-alpine:1.2.4
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: chart-vol
+          mountPath: /data/http/charts
+      volumes:
+      - name: chart-vol
+        configMap:
+          name: helm-repo-files
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: helm-repo
+spec:
+  selector:
+    app: helm-repo
+  ports:
+  - port: 80
+    targetPort: 8080
+EOF
+  oc apply -f helm-repo.yaml || kubectl apply -f helm-repo.yaml
+
+  cat <<EOF > repo.yaml
+apiVersion: helm.openshift.io/v1beta1
+kind: HelmChartRepository
+metadata:
+  name: rhdh-next-ci-repo
+  annotations:
+    rhdh.redhat.com/chart-version: "$CV"
+spec:
+  connectionConfig:
+    url: http://helm-repo.${namespace}.svc.cluster.local/charts
+EOF
+
+  oc apply -f repo.yaml || kubectl apply -f repo.yaml
+  popd  >/dev/null 2>&1 || exit 1
+
+  # clean up temp files
+  rm -fr /tmp/"$CV"-unpacked
+fi
 
 # 1. install (or upgrade)
 helm upgrade redhat-developer-hub -i "${CHART_URL}" --version "$CV"
@@ -83,6 +153,10 @@ helm upgrade redhat-developer-hub -i "${CHART_URL}" --version "$CV" \
     --set global.clusterRouterBase="${CLUSTER_ROUTER_BASE}" \
     --set global.postgresql.auth.password="$PASSWORD"
 
+echo "
+While deploying you can watch at 
+https://console-openshift-console.${CLUSTER_ROUTER_BASE}/topology/ns/${namespace}?view=graph
+"
 echo "
 Once deployed, Developer Hub $CV will be available at
 https://redhat-developer-hub-${namespace}.${CLUSTER_ROUTER_BASE}
