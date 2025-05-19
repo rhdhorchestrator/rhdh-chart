@@ -17,14 +17,12 @@ plugins:
           red-hat-developer-hub.backstage-plugin-orchestrator:
             appIcons:
               - importName: OrchestratorIcon
-                module: OrchestratorPlugin
                 name: orchestratorIcon
             dynamicRoutes:
               - importName: OrchestratorPage
                 menuItem:
                   icon: orchestratorIcon
                   text: Orchestrator
-                module: OrchestratorPlugin
                 path: /orchestrator
   - disabled: false
     package: "{{ $config.orchestratorPlugins.scope }}/{{ $config.orchestratorPlugins.scaffolderBackendOrchestrator.package }}"
@@ -33,7 +31,7 @@ plugins:
       orchestrator:
         dataIndexService:
           url: http://sonataflow-platform-data-index-service.{{ .Release.Namespace }}
-  - disbaled: false
+  - disabled: false
     package: "{{ $config.orchestratorPlugins.scope }}/{{ $config.orchestratorPlugins.orchestratorFormWidgets.package }}"
     integrity: "{{ $config.orchestratorPlugins.orchestratorFormWidgets.integrity }}"
 {{- end }}
