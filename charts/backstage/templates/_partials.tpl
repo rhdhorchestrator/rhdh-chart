@@ -34,6 +34,10 @@ plugins:
   - disabled: false
     package: "{{ $config.orchestratorPlugins.scope }}/{{ $config.orchestratorPlugins.orchestratorFormWidgets.package }}"
     integrity: "{{ $config.orchestratorPlugins.orchestratorFormWidgets.integrity }}"
+    pluginConfig:
+      dynamicPlugins:
+        frontend:
+          red-hat-developer-hub.backstage-plugin-orchestrator-form-widgets: {}
 {{- end }}
 
 {{- define "orchestrator.plugins.config" }}

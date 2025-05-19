@@ -81,6 +81,14 @@ upstream:
               options:
                 subject: legacy-default-config
                 secret: ${BACKEND_SECRET}
+      proxy:
+        reviveConsumedRequestBodies: true
+        endpoints:
+          '/mytesthttpserver':
+            target: 'http://mytesthttpservice:80'
+            allowedMethods: ['GET', 'POST']
+            allowedHeaders: ['test-header']
+
     containerSecurityContext:
       readOnlyRootFilesystem: true
       allowPrivilegeEscalation: false
