@@ -42,17 +42,17 @@ plugins:
 
 {{- define "orchestrator.plugins.config" }}
 orchestratorPlugins: 
-    scope: "https://github.com/rhdhorchestrator/orchestrator-plugins-internal-release/releases/download/v1.6.0-rc.9"
+    scope: "https://github.com/rhdhorchestrator/orchestrator-plugins-internal-release/releases/download/v1.6.0-rc.10"
     orchestrator:
-      package: "backstage-plugin-orchestrator-1.6.0-rc.9.tgz"
-      integrity: sha512-0/Eo9SqRtC9AmWkdJk+nhJSmSDBvKg1eWl0to5rOqsQiWRk57MUEaWRLwjK6fwu9975EJw3XvrTrmgYmFsI0mg==
+      package: "backstage-plugin-orchestrator-1.6.0-rc.10.tgz"
+      integrity: sha512-JZQVm6dDtG4NAMGzP/7N2S2ktkWx4Z4bf+WEkMAGaOa6rVNiaX2gYU9hrcbgk4RJuYLQG9ziNKBgxcuS4fbDcQ==
     orchestratorBackend:
-      package: "backstage-plugin-orchestrator-backend-dynamic-1.6.0-rc.9.tgz"
-      integrity: sha512-LQVUYGUSelYDubbwMG5PT9ITYlaghsTCp37ktIsLjC9Qlr2NeA20xAIV4oDhtNVkoRraR6iFmVVKXnD/D2yrLg==
+      package: "backstage-plugin-orchestrator-backend-dynamic-1.6.0-rc.10.tgz"
+      integrity: sha512-8MYLBHfb7PgZHUx+5/0Vp+O7fCCfnfCw6Q9SF2+WXdY4vyedQpj8L08ST6qwL+yEAIaz92P/2KTrV+ZHTnaFGw==
     scaffolderBackendOrchestrator:
-      package: "backstage-plugin-scaffolder-backend-module-orchestrator-dynamic-1.6.0-rc.9.tgz"
-      integrity: sha512-4F563LxlAzGakDx4J63szF0i8YyO6ZVRz0i9Bp/Qessdp1E+zlRCgyIqHWSgQGUopzVzNrT20LmHQUzosH0naw==
+      package: "backstage-plugin-scaffolder-backend-module-orchestrator-dynamic-1.6.0-rc.10.tgz"
+      integrity: sha512-YXWTWRcH1gvp+9PToEHimqpGTU1HMHjqOrsUKblgKgXp443xtFoglLGQrJeB3rAiAC2LZ++gbLKZK1wmBA3jOg==
     orchestratorFormWidgets:
-      package: "backstage-plugin-orchestrator-form-widgets-1.6.0-rc.9.tgz"
-      integrity: sha512-O5lwQ4dezu6ueZEHJ3rUXsjBGs8N5zTK540L8nAufx2DYyKApBuEMj4PJStW6rKFuA53HB49+y35wUhS40Fw1g==
+      package: "backstage-plugin-orchestrator-form-widgets-1.6.0-rc.10.tgz"
+      integrity: sha512-OxexajNyT9nMG5x+jswq9GKA/FqCUsbhkHLaV530qH5OJV3naXQ6kJVGQT0nJVih60/rk4yNG3s7afMvBtqW0g==
 {{- end }}
