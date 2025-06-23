@@ -54,5 +54,5 @@ orchestratorPlugins:
       integrity: sha512-ufHBFH1maL4w9/pxweFFzK2pGbhDfbJwSfPKmQyCtilJRUR7bLSPKXP2ZYYrR8tysiQ0vB6fw2FtuNQNDqHtqQ==
     orchestratorFormWidgets:
       package: "backstage-plugin-orchestrator-form-widgets-1.6.0-rc.11.tgz"
-      integrity: sha512-cZwpaHA1MoydTxRU3404AqgjzX+IeW1/2jnqzSHn4XwYNAg5xk5udTSq+zVabmimdeeKXWB3iCWi1sP4bLkdKQ==rk4yNG3s7afMvBtqW0g==
+      integrity: sha512-cZwpaHA1MoydTxRU3404AqgjzX+IeW1/2jnqzSHn4XwYNAg5xk5udTSq+zVabmimdeeKXWB3iCWi1sP4bLkdKQ==
 {{- end }}
