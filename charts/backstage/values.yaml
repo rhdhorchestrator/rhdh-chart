@@ -12,7 +12,16 @@ global:
     # Every item defines the plugin `package` as a [NPM package spec](https://docs.npmjs.com/cli/v10/using-npm/package-spec),
     # an optional `pluginConfig` with plugin-specific backstage configuration, and an optional `disabled` flag to disable/enable a plugin
     # listed in `includes` files. It also includes an `integrity` field that is used to verify the plugin package [integrity](https://w3c.github.io/webappsec-subresource-integrity/#integrity-metadata-description).
-    plugins: []
+    plugins: 
+      - disabled: false
+        package: "./dynamic-plugins/dist/backstage-plugin-notifications"
+      - disabled: false
+        package: "./dynamic-plugins/dist/backstage-plugin-signals"
+      - disabled: false
+        package: "./dynamic-plugins/dist/backstage-plugin-notifications-backend-dynamic"
+      - disabled: false
+        package: "./dynamic-plugins/dist/backstage-plugin-signals-backend-dynamic"
+    
 
   # -- Shorthand for users who do not want to specify a custom HOSTNAME. Used ONLY with the DEFAULT upstream.backstage.appConfig value and with OCP Route enabled.
   clusterRouterBase: "apps.example.com"
@@ -50,6 +59,11 @@ upstream:
     appConfig:
       auth:
         providers: {}
+        # Uncomment to easily sign in as guest during development
+        #providers:
+        #  guest:
+        #    dangerouslyAllowOutsideDevelopment: true
+        #environment: development
       app:
         # Please update to match host in case you don't want to configure hostname via `global.clusterRouterBase` or `global.host` if not deploying on an openshift cluster.
         baseUrl: 'https://{{- include "janus-idp.hostname" . }}'
@@ -350,7 +364,7 @@ test:
     tag: latest
 
 orchestrator:
-  enabled: false
+  enabled: true
   serverlessLogicOperator:
     enabled: true
   serverlessOperator:
