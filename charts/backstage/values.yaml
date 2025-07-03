@@ -60,10 +60,10 @@ upstream:
       auth:
         providers: {}
         # Uncomment to easily sign in as guest during development
-        #providers:
-        #  guest:
-        #    dangerouslyAllowOutsideDevelopment: true
-        #environment: development
+        providers:
+          guest:
+            dangerouslyAllowOutsideDevelopment: true
+        environment: development
       app:
         # Please update to match host in case you don't want to configure hostname via `global.clusterRouterBase` or `global.host` if not deploying on an openshift cluster.
         baseUrl: 'https://{{- include "janus-idp.hostname" . }}'
@@ -81,6 +81,14 @@ upstream:
               options:
                 subject: legacy-default-config
                 secret: ${BACKEND_SECRET}
+      proxy:
+        reviveConsumedRequestBodies: true
+        endpoints:
+          '/mytesthttpserver':
+            target: 'http://mytesthttpservice:80'
+            allowedMethods: ['GET', 'POST']
+            allowedHeaders: ['test-header']
+
     containerSecurityContext:
       readOnlyRootFilesystem: true
       allowPrivilegeEscalation: false
