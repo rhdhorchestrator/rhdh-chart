@@ -41,7 +41,7 @@ plugins:
 {{- end }}
 {{- define "orchestrator.plugins.config" }}
 orchestratorPlugins: 
-    scope: "https://github.com/rhdhorchestrator/orchestrator-plugins-internal-release/releases/download/v1.6.0-rc.3"
+    scope: "@redhat"
     orchestrator:
       package: "backstage-plugin-orchestrator@1.6.0"
       integrity: sha512-fOSJv2PgtD2urKwBM7p9W6gV/0UIHSf4pkZ9V/wQO0eg0Zi5Mys/CL1ba3nO9x9l84MX11UBZ2r7PPVJPrmOtw==
