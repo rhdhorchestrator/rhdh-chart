@@ -95,7 +95,7 @@
             "additionalProperties": false,
             "properties": {
                 "enabled": {
-                    "default": false,
+                    "default": true,
                     "title": "enabled flag",
                     "type": "boolean"
                 },
@@ -1173,7 +1173,12 @@
                                     "baseUrl": "https://{{- include \"janus-idp.hostname\" . }}"
                                 },
                                 "auth": {
-                                    "providers": {}
+                                    "environment": "development",
+                                    "providers": {
+                                        "guest": {
+                                            "dangerouslyAllowOutsideDevelopment": true
+                                        }
+                                    }
                                 },
                                 "backend": {
                                     "auth": {
@@ -1197,6 +1202,21 @@
                                             "user": "postgres"
                                         }
                                     }
+                                },
+                                "proxy": {
+                                    "endpoints": {
+                                        "/mytesthttpserver": {
+                                            "allowedHeaders": [
+                                                "test-header"
+                                            ],
+                                            "allowedMethods": [
+                                                "GET",
+                                                "POST"
+                                            ],
+                                            "target": "http://mytesthttpservice:80"
+                                        }
+                                    },
+                                    "reviveConsumedRequestBodies": true
                                 }
                             },
                             "examples": [
